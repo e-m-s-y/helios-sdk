@@ -1,0 +1,8 @@
+dist
+node_modules
+.npm
+.DS_Store
+.tags
+.idea
+test
+.env
