@@ -13,9 +13,20 @@ Helios SDK is a simple Software Development Kit to interact with the Helios brid
 
 ## Usage
 ### Installation
+```shell
+pnpm install @foly/helios-sdk
 ```
-pnpm install && pnpm build
+### Configuration
+Feel free to override the following default configuration to your own likings using a `.env` file.
+```dotenv
+CACHE_WALLET_DURATION=10000
+CACHE_NONCE_DURATION=10000
+TRANSACTION_AMOUNT=100000
+TRANSACTION_FEE=100000
+API_ENDPOINT=https://api.heliosblockchain.io
+SOCKET_ENDPOINT=https://socket.heliosblockchain.io
 ```
+
 ### Send transfer transaction
 ```javascript
 const SDK = require('@foly/helios-sdk');
@@ -64,8 +75,8 @@ heliosSocket.on('block.applied', data => console.log(data));
 ```
 ## Credits
 
-- [e-m-s-y](https://github.com/e-m-s-y)
-- [Solar-network](https://github.com/Solar-network)
+- [e-m-s-y](https://github.com/e-m-s-y) - maintainer of this project.
+- [Solar-network](https://github.com/Solar-network) - for providing Solar Core.
 
 ## License
 

@@ -4,9 +4,10 @@ const HeliosCrypto = require('@foly/helios-crypto');
 const Logger = require('../logger.js');
 const Request = require('./request.js');
 const Cache = require('../cache/index.js');
+const endpoint = process.env.API_ENDPOINT || 'https://api.heliosblockchain.io';
 
 async function getCryptoConfig() {
-    const response = await Request.get(`${process.env.API_ENDPOINT}/api/node/configuration/crypto`);
+    const response = await Request.get(`${endpoint}/api/node/configuration/crypto`);
 
     if ( ! response || response.status !== 200) {
         throw new Error('Could not get crypto config.');
@@ -31,7 +32,7 @@ async function broadcastTransaction(tx, mnemonic = null) {
 
     Logger.info(`Sending ${type} transaction to ${struct.recipientId}...`);
 
-    const response = await Request.post(`${process.env.API_ENDPOINT}/api/transactions`, {
+    const response = await Request.post(`${endpoint}/api/transactions`, {
         transactions: [struct]
     });
 
@@ -69,12 +70,12 @@ async function sendTransferTransaction(recipientId, mnemonic, amount = null, ven
     const nextNonce = await getNextNonce(sender);
 
     const tx = SolarCrypto.Transactions.BuilderFactory.transfer()
-        .amount(amount || process.env.TRANSACTION_AMOUNT)
+        .amount(amount || process.env.TRANSACTION_AMOUNT || '100000')
         .version(2)
         .recipientId(recipientId)
         .vendorField(vendorField)
         .nonce(nextNonce)
-        .fee(process.env.TRANSACTION_FEE)
+        .fee(process.env.TRANSACTION_FEE || '100000')
         .sign(mnemonic);
 
     return await broadcastTransaction(tx, mnemonic);
@@ -112,7 +113,7 @@ async function getWallet(address) {
         return Cache.Wallet.get(address);
     }
 
-    const response = await Request.get(`${process.env.API_ENDPOINT}/api/v2/wallets/${address}`);
+    const response = await Request.get(`${endpoint}/api/v2/wallets/${address}`);
 
     // New generated wallets don't exist on chain yet so a 404 may proceed.
     if (response && response.status === 404) {
@@ -143,7 +144,7 @@ async function getNextNonce(walletAddress) {
 }
 
 async function resetNonce(walletAddress) {
-    const response = await Request.get(`${process.env.API_ENDPOINT}/api/wallets/${walletAddress}`);
+    const response = await Request.get(`${endpoint}/api/wallets/${walletAddress}`);
 
     if ( ! response || response.status !== 200) {
         throw new Error('Could not get nonce.');
