@@ -113,7 +113,7 @@ async function getWallet(address) {
         return Cache.Wallet.get(address);
     }
 
-    const response = await Request.get(`${endpoint}/api/v2/wallets/${address}`);
+    const response = await Request.get(`${endpoint}/api/wallets/${address}`);
 
     // New generated wallets don't exist on chain yet so a 404 may proceed.
     if (response && response.status === 404) {
@@ -162,5 +162,9 @@ function revertNonce(walletAddress) {
 }
 
 module.exports = {
-    getCryptoConfig, sendTransferTransaction, sendAuthenticationTransaction, sendCharacterRegistrationTransaction,
+    getCryptoConfig,
+    getWallet,
+    sendTransferTransaction,
+    sendAuthenticationTransaction,
+    sendCharacterRegistrationTransaction,
 };
