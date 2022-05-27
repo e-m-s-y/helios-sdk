@@ -10,6 +10,7 @@ Helios SDK is a simple Software Development Kit to interact with the Helios brid
 
 ### Prerequisites
 - pnpm
+- NodeJS version 16.x
 
 ## Usage
 ### Installation
