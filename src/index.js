@@ -29,5 +29,6 @@ module.exports = {
     SolarCrypto,
     HeliosCrypto,
     Api,
-    Socket: require('./socket/index.js')
+    Secret: require('./secret/index.js'),
+    Socket: require('./socket/index.js'),
 };

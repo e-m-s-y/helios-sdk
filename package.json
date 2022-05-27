@@ -1,6 +1,6 @@
 {
     "name": "@foly/helios-sdk",
-    "version": "0.0.2",
+    "version": "1.0.0",
     "description": "A simple Software Development Kit to interact with the Helios bridgechain",
     "license": "CC BY-ND 4.0",
     "contributors": [
@@ -8,11 +8,12 @@
     ],
     "main": "src/index.js",
     "dependencies": {
-        "@foly/helios-crypto": "3.2.1",
+        "@foly/helios-crypto": "3.2.1-next.1",
         "@solar-network/crypto": "3.2.1",
         "axios": "^0.27.2",
         "dotenv": "^16.0.0",
-        "socket.io-client": "^4.5.0"
+        "socket.io-client": "^4.5.0",
+        "uuid": "^8.3.2"
     },
     "engines": {
         "node": ">=16.0.0 <17"

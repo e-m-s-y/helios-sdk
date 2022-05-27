@@ -6,6 +6,7 @@ Helios SDK is a simple Software Development Kit to interact with the Helios brid
 - Easily broadcast transactions.
 - Automatic crypto config handling.
 - Automatic nonce handling.
+- Sign and verify crypto messages with easy.
 - Listen to real-time blockchain events with ease.
 
 ### Prerequisites
@@ -64,6 +65,15 @@ await SDK.Api.Relay.sendCharacterRegistrationTransaction(
     },
     mnemonic,
 );
+```
+### Sign and verify a crypto message
+```javascript
+const SDK = require('@foly/helios-sdk');
+
+SDK.Secret.create(publicKey, 'message');
+
+const signature = SDK.Secret.sign(publicKey, mnemonic).signature;
+const isVerified = SDK.Secret.verify(publicKey, signature)
 ```
 ### Listen to real-time Helios blockchain events
 ```javascript
