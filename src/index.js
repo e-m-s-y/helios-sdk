@@ -8,8 +8,6 @@ dotenv.config();
 const Logger = require('./logger.js');
 const Api = require('./api/index.js');
 
-Helios.Api = Api.Helios;
-
 async function initialize() {
     Logger.info('Setting crypto config...');
 
@@ -32,7 +30,7 @@ module.exports = {
     Solar,
     Helios,
     Ark,
-    Request: Api.Request,
+    Api,
     Secret: require('./secret/index.js'),
     Socket: require('./socket/index.js'),
 };
