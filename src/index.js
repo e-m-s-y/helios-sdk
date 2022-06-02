@@ -13,7 +13,7 @@ Helios.Api = Api.Helios;
 async function initialize() {
     Logger.info('Setting crypto config...');
 
-    const config = await Api.Relay.getCryptoConfig();
+    const config = await Api.Helios.getCryptoConfig();
 
     Solar.Managers.configManager.setConfig(config);
 
