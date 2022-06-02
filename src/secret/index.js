@@ -1,6 +1,6 @@
 const uuid = require('uuid');
-const { HeliosCrypto } = require('@foly/helios-crypto');
-const { ArkCrypto } = require('@arkecosystem/crypto');
+const Helios = require('@foly/helios-crypto');
+const Ark = require('@arkecosystem/crypto');
 
 const Cache = require('../cache/index.js');
 
@@ -20,7 +20,7 @@ function remove(publicKey) {
     return Cache.Secret.remove(publicKey);
 }
 
-function sign(publicKey, mnemonic) {
+function validateSignParameters(publicKey, mnemonic) {
     if ( ! publicKey) {
         throw new Error('Cannot sign message because public key is missing.');
     }
@@ -28,6 +28,10 @@ function sign(publicKey, mnemonic) {
     if ( ! mnemonic) {
         throw new Error('Cannot sign message because mnemonic is missing.');
     }
+}
+
+function signEcdsa(publicKey, mnemonic) {
+    validateSignParameters(publicKey, mnemonic);
 
     const message = get(publicKey);
 
@@ -35,10 +39,22 @@ function sign(publicKey, mnemonic) {
         throw new Error('Cannot sign message because the secret does not exist.');
     }
 
-    return Crypto.Message.sign(message, mnemonic);
+    return Helios.Crypto.Message.sign(message, mnemonic);
 }
 
-function validate(publicKey, signature) {
+function signBip340(publicKey, mnemonic) {
+    validateSignParameters(publicKey, mnemonic);
+
+    const message = get(publicKey);
+
+    if ( ! message) {
+        throw new Error('Cannot sign message because the secret does not exist.');
+    }
+
+    return Helios.Crypto.Message.sign(message, mnemonic);
+}
+
+function validateVerifyParameters(publicKey, signature) {
     if ( ! signature) {
         throw new Error('Cannot verify secret because signature is missing.');
     }
@@ -49,7 +65,7 @@ function validate(publicKey, signature) {
 }
 
 function verifyEcdsa(publicKey, signature) {
-    validate(publicKey, signature);
+    validateVerifyParameters(publicKey, signature);
 
     const message = get(publicKey);
 
@@ -57,7 +73,7 @@ function verifyEcdsa(publicKey, signature) {
         throw new Error('Cannot verify because the secret does not exist.');
     }
 
-    return ArkCrypto.Message.verify({
+    return Ark.Crypto.Message.verify({
         message,
         publicKey,
         signature
@@ -65,7 +81,7 @@ function verifyEcdsa(publicKey, signature) {
 }
 
 function verifyBip340(publicKey, signature) {
-    validate(publicKey, signature);
+    validateVerifyParameters(publicKey, signature);
 
     const message = get(publicKey);
 
@@ -73,7 +89,7 @@ function verifyBip340(publicKey, signature) {
         throw new Error('Cannot verify because the secret does not exist.');
     }
 
-    return HeliosCrypto.Message.verify({
+    return Helios.Crypto.Message.verify({
         message,
         publicKey,
         signature
@@ -84,7 +100,8 @@ module.exports = {
     create,
     get,
     remove,
-    sign,
+    signEcdsa,
+    signBip340,
     verifyEcdsa,
     verifyBip340,
 }
