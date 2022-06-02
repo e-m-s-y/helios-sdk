@@ -34,7 +34,7 @@ SOCKET_ENDPOINT=https://socket.heliosblockchain.io
 const SDK = require('@foly/helios-sdk');
 
 await SDK.initialize();
-await SDK.Api.Relay.sendTransferTransaction(
+await SDK.Api.Helios.sendTransferTransaction(
     recipientId, 
     mnemonic, 
     amount, 
@@ -46,7 +46,7 @@ await SDK.Api.Relay.sendTransferTransaction(
 const SDK = require('@foly/helios-sdk');
 
 await SDK.initialize();
-await SDK.Api.Relay.sendAuthenticationTransaction(
+await SDK.Api.Helios.sendAuthenticationTransaction(
     recipientId,
     isLoggedIn,
     mnemonic,
@@ -57,7 +57,7 @@ await SDK.Api.Relay.sendAuthenticationTransaction(
 const SDK = require('@foly/helios-sdk');
 
 await SDK.initialize();
-await SDK.Api.Relay.sendCharacterRegistrationTransaction(
+await SDK.Api.Helios.sendCharacterRegistrationTransaction(
     recipientId,
     {
         name: 'name',
@@ -66,6 +66,23 @@ await SDK.Api.Relay.sendCharacterRegistrationTransaction(
     mnemonic,
 );
 ```
+### Get wallet
+```javascript
+const SDK = require('@foly/helios-sdk');
+
+await SDK.initialize();
+
+const wallet = await SDK.Api.Helios.getWallet(address);
+```
+### Search for transactions
+```javascript
+const SDK = require('@foly/helios-sdk');
+
+await SDK.initialize();
+
+const response = await SDK.Api.Helios.searchTransactions(queryString);
+```
+The query parameters can be found at [ARK's documentation](https://ark.dev/docs/api/public-rest-api/endpoints/transactions#list-all-transactions).
 ### Sign and verify a crypto message
 ```javascript
 const SDK = require('@foly/helios-sdk');

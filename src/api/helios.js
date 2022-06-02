@@ -168,6 +168,7 @@ function revertNonce(walletAddress) {
 module.exports = {
     getCryptoConfig,
     getWallet,
+    searchTransactions,
     sendTransferTransaction,
     sendAuthenticationTransaction,
     sendCharacterRegistrationTransaction,
