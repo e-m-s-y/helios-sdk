@@ -1,6 +1,6 @@
 {
     "name": "@foly/helios-sdk",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "A simple Software Development Kit to interact with the Helios bridgechain",
     "license": "CC BY-ND 4.0",
     "contributors": [

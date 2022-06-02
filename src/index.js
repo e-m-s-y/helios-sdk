@@ -1,7 +1,7 @@
-const SolarCrypto = require('@solar-network/crypto');
-const HeliosCrypto = require('@foly/helios-crypto');
-const ArkCrypto = require('@arkecosystem/crypto');
 const dotenv = require('dotenv');
+const Ark = require('@arkecosystem/crypto');
+const Helios = require('@foly/helios-crypto');
+const Solar = require('@solar-network/crypto');
 
 dotenv.config();
 
@@ -13,23 +13,23 @@ async function initialize() {
 
     const config = await Api.Relay.getCryptoConfig();
 
-    SolarCrypto.Managers.configManager.setConfig(config);
+    Solar.Managers.configManager.setConfig(config);
 
     for (const milestone of config.milestones) {
-        SolarCrypto.Managers.configManager.setHeight(milestone.height);
+        Solar.Managers.configManager.setHeight(milestone.height);
     }
 
     Logger.info('Registering custom transactions...');
-    SolarCrypto.Transactions.TransactionRegistry.registerTransactionType(HeliosCrypto.Transactions.AuthenticationTransaction);
-    SolarCrypto.Transactions.TransactionRegistry.registerTransactionType(HeliosCrypto.Transactions.CharacterRegistrationTransaction);
+    Solar.Transactions.TransactionRegistry.registerTransactionType(Helios.Transactions.AuthenticationTransaction);
+    Solar.Transactions.TransactionRegistry.registerTransactionType(Helios.Transactions.CharacterRegistrationTransaction);
     Logger.info('SDK is ready for use.')
 }
 
 module.exports = {
     initialize,
-    SolarCrypto,
-    HeliosCrypto,
-    ArkCrypto,
+    Solar,
+    Helios,
+    Ark,
     Api,
     Secret: require('./secret/index.js'),
     Socket: require('./socket/index.js'),
