@@ -1,5 +1,6 @@
 const SolarCrypto = require('@solar-network/crypto');
 const HeliosCrypto = require('@foly/helios-crypto');
+const ArkCrypto = require('@arkecosystem/crypto');
 const dotenv = require('dotenv');
 
 dotenv.config();
@@ -28,6 +29,7 @@ module.exports = {
     initialize,
     SolarCrypto,
     HeliosCrypto,
+    ArkCrypto,
     Api,
     Secret: require('./secret/index.js'),
     Socket: require('./socket/index.js'),

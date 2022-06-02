@@ -1,5 +1,6 @@
 const uuid = require('uuid');
-const { Crypto } = require('@foly/helios-crypto');
+const { HeliosCrypto } = require('@foly/helios-crypto');
+const { ArkCrypto } = require('@arkecosystem/crypto');
 
 const Cache = require('../cache/index.js');
 
@@ -37,7 +38,7 @@ function sign(publicKey, mnemonic) {
     return Crypto.Message.sign(message, mnemonic);
 }
 
-function verify(publicKey, signature) {
+function validate(publicKey, signature) {
     if ( ! signature) {
         throw new Error('Cannot verify secret because signature is missing.');
     }
@@ -45,6 +46,10 @@ function verify(publicKey, signature) {
     if ( ! publicKey) {
         throw new Error('Cannot verify secret because public key is missing.');
     }
+}
+
+function verifyEcdsa(publicKey, signature) {
+    validate(publicKey, signature);
 
     const message = get(publicKey);
 
@@ -52,7 +57,23 @@ function verify(publicKey, signature) {
         throw new Error('Cannot verify because the secret does not exist.');
     }
 
-    return Crypto.Message.verify({
+    return ArkCrypto.Message.verify({
+        message,
+        publicKey,
+        signature
+    });
+}
+
+function verifyBip340(publicKey, signature) {
+    validate(publicKey, signature);
+
+    const message = get(publicKey);
+
+    if ( ! message) {
+        throw new Error('Cannot verify because the secret does not exist.');
+    }
+
+    return HeliosCrypto.Message.verify({
         message,
         publicKey,
         signature
@@ -64,5 +85,6 @@ module.exports = {
     get,
     remove,
     sign,
-    verify
+    verifyEcdsa,
+    verifyBip340,
 }
