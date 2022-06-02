@@ -4,7 +4,7 @@ const HeliosCrypto = require('@foly/helios-crypto');
 const Logger = require('../logger.js');
 const Request = require('./request.js');
 const Cache = require('../cache/index.js');
-const endpoint = process.env.API_ENDPOINT || 'https://api.heliosblockchain.io';
+const endpoint = process.env.API_HELIOS_ENDPOINT || 'https://api.heliosblockchain.io';
 
 async function getCryptoConfig() {
     const response = await Request.get(`${endpoint}/api/node/configuration/crypto`);
@@ -79,6 +79,10 @@ async function sendTransferTransaction(recipientId, mnemonic, amount = null, ven
         .sign(mnemonic);
 
     return await broadcastTransaction(tx, mnemonic);
+}
+
+async function searchTransactions(queryString) {
+    return Request.get(`${endpoint}/api/transactions${queryString}`);
 }
 
 async function sendCharacterRegistrationTransaction(recipientId, asset, mnemonic) {

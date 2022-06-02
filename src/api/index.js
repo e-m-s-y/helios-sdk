@@ -1,4 +1,4 @@
 module.exports = {
-    Relay: require('./client.js'),
+    Helios: require('./helios.js'),
     Request: require('./request.js')
 };

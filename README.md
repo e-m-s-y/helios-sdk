@@ -73,9 +73,9 @@ const SDK = require('@foly/helios-sdk');
 SDK.Secret.create(publicKey, 'message');
 
 const ecdsa = SDK.Secret.signEcdsa(publicKey, mnemonic).signature;
-const bip340 = SDK.Secret.signBip340(publicKey, mnemonic).signature;
+const schnorr = SDK.Secret.signSchnorr(publicKey, mnemonic).signature;
 const isVerified = SDK.Secret.verifyEcdsa(publicKey, ecdsa);
-const isVerified = SDK.Secret.verifyBip340(publicKey, bip340);
+const isVerified = SDK.Secret.verifySchnorr(publicKey, schnorr);
 ```
 ### Listen to real-time Helios blockchain events
 ```javascript

@@ -42,7 +42,7 @@ function signEcdsa(publicKey, mnemonic) {
     return Helios.Crypto.Message.sign(message, mnemonic);
 }
 
-function signBip340(publicKey, mnemonic) {
+function signSchnorr(publicKey, mnemonic) {
     validateSignParameters(publicKey, mnemonic);
 
     const message = get(publicKey);
@@ -80,7 +80,7 @@ function verifyEcdsa(publicKey, signature) {
     });
 }
 
-function verifyBip340(publicKey, signature) {
+function verifySchnorr(publicKey, signature) {
     validateVerifyParameters(publicKey, signature);
 
     const message = get(publicKey);
@@ -101,7 +101,7 @@ module.exports = {
     get,
     remove,
     signEcdsa,
-    signBip340,
+    signSchnorr,
     verifyEcdsa,
-    verifyBip340,
+    verifySchnorr,
 }
