@@ -20,7 +20,7 @@ function get(walletAddress) {
     }
 
     if (Date.now() - wallet.cached_at > cacheDuration) {
-        wallet.delete(walletAddress);
+        cache.delete(walletAddress);
         Logger.info(`Removed expired cached wallet ${walletAddress}`);
 
         return;
