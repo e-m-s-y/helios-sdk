@@ -41,12 +41,12 @@ async function broadcastTransaction(tx, mnemonic = null) {
     }
 
     if (response.data.data.broadcast[0] === struct.id) {
+        Cache.Nonce.increment(senderWalletAddress);
+
         return struct;
     }
 
     if (response.data.errors[struct.id]) {
-        console.log(response.data.errors[struct.id]);
-
         if (mnemonic != null && response.data.errors[struct.id].message.includes('Cannot apply a transaction with nonce')) {
             Logger.error('Detected invalid nonce, resetting nonce...');
             await resetNonce(senderWalletAddress);
@@ -135,16 +135,12 @@ async function getWallet(address) {
 
 async function getNextNonce(walletAddress) {
     if (Cache.Nonce.has(walletAddress)) {
-        Cache.Nonce.set(walletAddress, Cache.Nonce.get(walletAddress) + 1);
-
-        return Cache.Nonce.get(walletAddress);
+        return Cache.Nonce.get(walletAddress) + 1;
     }
 
     await resetNonce(walletAddress);
 
-    Cache.Nonce.set(walletAddress, Cache.Nonce.get(walletAddress) + 1);
-
-    return Cache.Nonce.get(walletAddress);
+    return Cache.Nonce.get(walletAddress) + 1;
 }
 
 async function resetNonce(walletAddress) {
@@ -154,14 +150,18 @@ async function resetNonce(walletAddress) {
         throw new Error('Could not get nonce.');
     }
 
-    Cache.Nonce.set(walletAddress, parseInt(response.data.data.nonce));
-    Logger.debug(`Reset cached nonce for ${walletAddress}`);
+    const nonce = parseInt(response.data.data.nonce);
+
+    Cache.Nonce.set(walletAddress, nonce);
+    Logger.debug(`Reset cached nonce (${nonce}) for ${walletAddress}`);
 }
 
 function revertNonce(walletAddress) {
     if (Cache.Nonce.has(walletAddress)) {
-        Cache.Nonce.set(walletAddress, Cache.Nonce.get(walletAddress) - 1);
-        Logger.debug(`Reverted cached nonce for ${walletAddress}`);
+        const nonce = Cache.Nonce.get(walletAddress) - 1;
+
+        Cache.Nonce.set(walletAddress, nonce);
+        Logger.debug(`Reverted cached nonce (${nonce}) for ${walletAddress}`);
     }
 }
 

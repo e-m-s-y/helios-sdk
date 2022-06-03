@@ -9,7 +9,7 @@ function set(walletAddress, nonce) {
         data: nonce
     });
 
-    Logger.info(`Cached nonce for wallet ${walletAddress}`);
+    Logger.info(`Cached nonce (${nonce}) for wallet ${walletAddress}`);
 }
 
 function get(walletAddress) {
@@ -31,6 +31,14 @@ function get(walletAddress) {
     return wallet.data;
 }
 
+function increment(walletAddress) {
+    const nonce = get(walletAddress) || 0;
+
+    set(walletAddress, nonce);
+
+    Logger.info(`Cached incremented nonce for wallet ${walletAddress}`);
+}
+
 function has(walletAddress) {
     return cache.has(walletAddress);
 }
@@ -38,5 +46,6 @@ function has(walletAddress) {
 module.exports = {
     set,
     get,
-    has
+    has,
+    increment
 };
