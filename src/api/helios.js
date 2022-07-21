@@ -30,7 +30,7 @@ async function broadcastTransaction(tx, mnemonic = null) {
 
     const type = tx.constructor.name.replace('Builder', '');
 
-    Logger.info(`Sending ${type} transaction to ${struct.recipientId}...`);
+    Logger.info(`Sending ${type} transaction to ${struct.recipientId} with nonce ${struct.nonce}...`);
 
     const response = await Request.post(`${endpoint}/api/transactions`, {
         transactions: [struct]
@@ -158,10 +158,11 @@ async function resetNonce(walletAddress) {
 
 function revertNonce(walletAddress) {
     if (Cache.Nonce.has(walletAddress)) {
-        const nonce = Cache.Nonce.get(walletAddress) - 1;
+        const oldNonce = Cache.Nonce.get(walletAddress);
+        const newNonce = oldNonce - 1;
 
-        Cache.Nonce.set(walletAddress, nonce);
-        Logger.debug(`Reverted cached nonce (${nonce}) for ${walletAddress}`);
+        Cache.Nonce.set(walletAddress, newNonce);
+        Logger.debug(`Reverted cached nonce from ${oldNonce} to ${newNonce} for ${walletAddress}`);
     }
 }
 

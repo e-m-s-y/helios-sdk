@@ -32,11 +32,13 @@ function get(walletAddress) {
 }
 
 function increment(walletAddress) {
-    const nonce = get(walletAddress) || 0;
+    if (has(walletAddress)) {
+        const incrementedNonce = get(walletAddress) + 1;
 
-    set(walletAddress, nonce);
+        set(walletAddress, incrementedNonce);
 
-    Logger.info(`Cached incremented nonce for wallet ${walletAddress}`);
+        Logger.info(`Cached incremented nonce (${incrementedNonce}) for wallet ${walletAddress}`);
+    }
 }
 
 function has(walletAddress) {
