@@ -4,96 +4,134 @@ const Ark = require('@arkecosystem/crypto');
 
 const Cache = require('../cache/index.js');
 
-function create(publicKey, message = undefined) {
-    message = message || uuid.v4();
+function create(publicKey, value = undefined) {
+    value = value || uuid.v4();
 
-    Cache.Secret.set(publicKey, message);
+    Cache.Secret.set(publicKey, value);
 
-    return get(publicKey);
+    return value;
 }
 
-function get(publicKey = undefined) {
-    return Cache.Secret.get(publicKey);
+function get(publicKey = undefined, value = undefined) {
+    return Cache.Secret.get(publicKey, value);
 }
 
-function remove(publicKey) {
-    return Cache.Secret.remove(publicKey);
+function remove(publicKey, value) {
+    return Cache.Secret.remove(publicKey, value);
 }
 
-function validateSignParameters(publicKey, mnemonic) {
+function clean() {
+    const cache = Cache.Secret.get();
+
+    for (const [publicKey, secrets] of cache.entries()) {
+        for (const secret of secrets) {
+            if (Cache.Secret.isExpired(secret)) {
+                Cache.Secret.remove(publicKey, secret.data);
+            }
+        }
+    }
+}
+
+function validateSignParameters(publicKey, secret, mnemonic) {
     if ( ! publicKey) {
-        throw new Error('Cannot sign message because public key is missing.');
+        throw new Error('Cannot sign secret because public key is missing.');
+    }
+
+    if ( ! secret) {
+        throw new Error('Cannot sign secret because secret is missing.');
     }
 
     if ( ! mnemonic) {
-        throw new Error('Cannot sign message because mnemonic is missing.');
+        throw new Error('Cannot sign secret because mnemonic is missing.');
     }
 }
 
-function signEcdsa(publicKey, mnemonic) {
-    validateSignParameters(publicKey, mnemonic);
+function signEcdsa(publicKey, secret, mnemonic) {
+    validateSignParameters(publicKey, secret, mnemonic);
 
-    const message = get(publicKey);
+    secret = get(publicKey, secret);
 
-    if ( ! message) {
-        throw new Error('Cannot sign message because the secret does not exist.');
+    if ( ! secret) {
+        throw new Error('Cannot sign secret because the secret does not exist.');
     }
 
-    return Helios.Crypto.Message.sign(message, mnemonic);
+    return Ark.Crypto.Message.sign(secret, mnemonic);
 }
 
-function signSchnorr(publicKey, mnemonic) {
-    validateSignParameters(publicKey, mnemonic);
+function signSchnorr(publicKey, secret, mnemonic) {
+    validateSignParameters(publicKey, secret, mnemonic);
 
-    const message = get(publicKey);
+    secret = get(publicKey, secret);
 
-    if ( ! message) {
-        throw new Error('Cannot sign message because the secret does not exist.');
+    if ( ! secret) {
+        throw new Error('Cannot sign secret because the secret does not exist.');
     }
 
-    return Helios.Crypto.Message.sign(message, mnemonic);
+    return Helios.Crypto.Message.sign(secret, mnemonic);
 }
 
 function validateVerifyParameters(publicKey, signature) {
     if ( ! signature) {
-        throw new Error('Cannot verify secret because signature is missing.');
+        throw new Error('Cannot verify secrets because signature is missing.');
     }
 
     if ( ! publicKey) {
-        throw new Error('Cannot verify secret because public key is missing.');
+        throw new Error('Cannot verify secrets because public key is missing.');
     }
 }
 
 function verifyEcdsa(publicKey, signature) {
     validateVerifyParameters(publicKey, signature);
 
-    const message = get(publicKey);
+    const secrets = get(publicKey);
 
-    if ( ! message) {
-        throw new Error('Cannot verify because the secret does not exist.');
+    if ( ! secrets) {
+        throw new Error('Cannot verify because the secrets do not exist.');
     }
 
-    return Ark.Crypto.Message.verify({
-        message,
-        publicKey,
-        signature
-    });
+    for (const secret of secrets) {
+        try {
+            const isVerified = Ark.Crypto.Message.verify({
+                message: secret.data,
+                publicKey,
+                signature
+            });
+
+
+
+            if (isVerified) {
+                return true;
+            }
+        } catch (error) {
+            console.log(error.message);
+        }
+    }
+
+    return false;
 }
 
 function verifySchnorr(publicKey, signature) {
     validateVerifyParameters(publicKey, signature);
 
-    const message = get(publicKey);
+    const secrets = get(publicKey);
 
-    if ( ! message) {
-        throw new Error('Cannot verify because the secret does not exist.');
+    if ( ! secrets) {
+        throw new Error('Cannot verify because the secrets do not exist.');
     }
 
-    return Helios.Crypto.Message.verify({
-        message,
-        publicKey,
-        signature
-    });
+    for (const secret in secrets) {
+        const isVerified = Helios.Crypto.Message.verify({
+            message: secret.data,
+            publicKey,
+            signature
+        });
+
+        if (isVerified) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 module.exports = {
@@ -104,4 +142,5 @@ module.exports = {
     signSchnorr,
     verifyEcdsa,
     verifySchnorr,
+    clean,
 }
